@@ -52,7 +52,7 @@ class ImageProcessing:
         return cth
     def get_enhance_image(self, image):
         #Thresholding T = 100
-        ret, res = cv.threshold(image, 100, 255, cv.THRESH_BINARY_INV)
+        ret, res = cv.threshold(image, 90, 255, cv.THRESH_BINARY_INV)
         low_pass_kernel = np.ones((5, 5), np.float32) / 25.0
         res = cv.filter2D(res, -1, low_pass_kernel)
         #Otsu
@@ -63,16 +63,4 @@ class ImageProcessing:
         res = self.scale_norm_image(res)
         res = self.convert_float2int(res)
         return res
-    def get_text_area(self, image):
-        width, height = image.shape[0], image.shape[1]
-        kernel_size = 5
-        res = image.copy()
-        for i in range(0, width, kernel_size):
-            for j in range(0, height, kernel_size):
-                x,y = np.where(res[i:i+kernel_size, j:j+kernel_size] == 255)
-                percent = len(x) / 25.0
-                if (percent >= 0.06 and percent <= 0.93):
-                    res[i:i+kernel_size, j:j+kernel_size] = 255
-                else:
-                    res[i:i+kernel_size, j:j+kernel_size] = 0
-        return res
+    

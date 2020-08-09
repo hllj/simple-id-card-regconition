@@ -3,6 +3,7 @@ import cv2 as cv
 from dataloader.dataloader import DataLoader
 from dataloader.dataloader import ImageLoader
 from imageprocessing.imageprocessing import ImageProcessing
+from imageprocessing.textarea import TextArea
 
 if __name__ == "__main__":
     dl = DataLoader()
@@ -17,11 +18,8 @@ if __name__ == "__main__":
     card = improc.get_grayscale(card)
     cv.imshow('Grayscale', card)
     enhance_image = improc.get_enhance_image(card)
-    contours, hierachy = cv.findContours(enhance_image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
-    print(len(contours))
-    for contour in contours:
-        (x, y, w, h) = cv.boundingRect(contour)
-        cv.rectangle(contour_image, (x,y), (x+w,y+h), (0,255,0), 2)
+    textarea = TextArea(contour_image, card, enhance_image)
+    contours, contour_image = textarea.get_contour_textarea()
     cv.imshow('Enhance', enhance_image)
     cv.imshow('Contour', contour_image)
     while True:
