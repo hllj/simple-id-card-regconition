@@ -55,12 +55,11 @@ class ImageProcessing:
         ret, res = cv.threshold(image, 90, 255, cv.THRESH_BINARY_INV)
         low_pass_kernel = np.ones((5, 5), np.float32) / 25.0
         res = cv.filter2D(res, -1, low_pass_kernel)
-        #Otsu
-        ret, res = cv.threshold(res, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
         #Morphology transformation
         res = self.get_dilation_image(res, self.kernel_5, 2)
         res = self.get_closing_image(res, self.kernel_5)
         res = self.scale_norm_image(res)
         res = self.convert_float2int(res)
-        return res
-    
+        #Otsu
+        ret, res = cv.threshold(res, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+        return res 

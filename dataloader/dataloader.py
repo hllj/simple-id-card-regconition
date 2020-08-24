@@ -2,6 +2,8 @@ from dataloader import DATA_FOLDER
 import json
 import cv2 as cv
 import numpy as np
+import os
+import shutil
 
 class DataLoader:
     def __init__(self):
@@ -17,6 +19,18 @@ class DataLoader:
         print("Show key in data")
         for key, value in self.data.items():
             print("Key : ", key)
+    def create_pure_data(self):
+        subfolders = [ f.path for f in os.scandir(DATA_FOLDER) if f.is_dir() ]
+        print(subfolders)
+        pwd = os.getcwd()
+        os.makedirs(os.path.join(pwd, 'data_clear/images'))
+        os.makedirs(os.path.join(pwd, 'data_clear/ground_truth'))
+        for folder_dir in subfolders:
+            name_folder = folder_dir.split('/')[2]
+            image_file = folder_dir + '/images/' + name_folder + '.tif'
+            ground_truth_file = folder_dir + '/ground_truth/' + name_folder + '.json'
+            shutil.copy(image_file, 'data_clear/images/')
+            shutil.copy(ground_truth_file, 'data_clear/ground_truth')
 
 def get_ground_truth_dir(image_dir):
     ground_truth_dir = image_dir.replace('images', 'ground_truth').replace('tif', 'json')
@@ -59,3 +73,4 @@ class ImageLoader:
     def show_image(self):
         print(self.image_dir)
         cv.imshow('Example image', self.image) 
+

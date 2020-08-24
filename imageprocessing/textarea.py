@@ -23,8 +23,13 @@ class TextArea():
         djset = DisjointSet(bounding_boxes, bounding_boxes_parent)
         for i in range(len(bounding_boxes)):
             for j in range(i + 1, len(bounding_boxes)):
-                if BoundingBox.straight_on_row(bounding_boxes[i], bounding_boxes[j]) == True:
+                if (BoundingBox.straight_on_row(bounding_boxes[i], bounding_boxes[j]) == True):
                     djset.union(bounding_boxes[i], bounding_boxes[j])
+        for i in range(len(bounding_boxes)):
+            for j in range(i + 1, len(bounding_boxes)):
+                if (BoundingBox.is_intersect(bounding_boxes[i], bounding_boxes[j]) == True):
+                    djset.union(bounding_boxes[i], bounding_boxes[j])
+
         is_boundingbox_parent = {}
         for bbox in bounding_boxes:
             is_boundingbox_parent[bbox] = True
@@ -43,8 +48,7 @@ class TextArea():
         for bounding_box in joint_boundingboxes:
             x, y, w, h = bounding_box.get_values()
             cv.rectangle(contour_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
-            cv.imshow('rect {} {} {} {}'.format(x, y, w, h), self.original[y:y + h, x:x+w])
-        return contours, contour_image
+        return joint_boundingboxes, contour_image
 
 class BoundingBox():
     def __init__(self, x, y, w, h):
@@ -71,13 +75,23 @@ class BoundingBox():
         return (bb.y, bb.x)
     @staticmethod
     def straight_on_row(bb1, bb2):
-        if (abs(bb1.x + bb1.w - bb2.x) <= 30 or abs(bb2.x + bb2.w - bb1.x) <= 30):
+        if (abs(bb1.x + bb1.w - bb2.x) <= 15 or abs(bb2.x + bb2.w - bb1.x) <= 15):
             if (bb1.y <= bb2.y <= bb1.y + bb1.h): 
                 return True
             if (bb2.y <= bb1.y <= bb2.y + bb2.h):
                 return True
         return False
-
+    @staticmethod
+    def is_intersect(bb1, bb2):
+        r1_left = bb1.x
+        r1_right = bb1.x + bb1.w
+        r1_bottom = bb1.y
+        r1_top = bb1.y + bb1.h
+        r2_left = bb2.x
+        r2_right = bb2.x + bb2.w
+        r2_bottom = bb2.y
+        r2_top = bb2.y + bb2.h
+        return not(r2_left > r1_right or r2_right < r1_left or r2_top < r1_bottom or r2_bottom > r1_top)
 class DisjointSet():
     def __init__(self, vertices, parent):
         self.vertices = vertices
