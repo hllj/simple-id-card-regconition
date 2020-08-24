@@ -47,7 +47,7 @@ class TextArea():
         print(len(joint_boundingboxes))
         for bounding_box in joint_boundingboxes:
             x, y, w, h = bounding_box.get_values()
-            cv.rectangle(contour_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            cv.rectangle(contour_image, (x, y), (x+w, y+h), (255, 0, 0), 2)
         return joint_boundingboxes, contour_image
 
 class BoundingBox():
@@ -92,6 +92,27 @@ class BoundingBox():
         r2_bottom = bb2.y
         r2_top = bb2.y + bb2.h
         return not(r2_left > r1_right or r2_right < r1_left or r2_top < r1_bottom or r2_bottom > r1_top)
+    @staticmethod
+    def bb_IoU(bb1, bb2):
+        xA = max(bb1.x, bb2.x)
+        yA = max(bb1.y, bb2.y)
+        xB = min(bb1.x + bb1.w, bb2.x + bb2.w)
+        yB = min(bb1.y + bb1.h, bb2.y + bb2.h)
+        intersection_area = (xB - xA + 1) * (yB - yA + 1)
+        bb1_area = bb1.w * bb1.h 
+        bb2_area = bb2.w * bb2.h
+        iou = intersection_area / (bb1_area + bb2_area - intersection_area)
+        return iou
+    @staticmethod
+    def intersection_vs_groundtruth(bb, ground_truth_bb):
+        xA = max(bb.x, ground_truth_bb.x)
+        yA = max(bb.y, ground_truth_bb.y)
+        xB = min(bb.x + bb.w, ground_truth_bb.x + ground_truth_bb.w)
+        yB = min(bb.y + bb.h, ground_truth_bb.y + ground_truth_bb.h)
+        intersection_area = (xB - xA + 1) * (yB - yA + 1)
+        ground_truth_area = ground_truth_bb.w * ground_truth_bb.h
+        return intersection_area / (1.0 * ground_truth_area)
+
 class DisjointSet():
     def __init__(self, vertices, parent):
         self.vertices = vertices

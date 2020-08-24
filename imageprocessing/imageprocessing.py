@@ -51,10 +51,13 @@ class ImageProcessing:
         cth = self.convert_float2int(cth)
         return cth
     def get_enhance_image(self, image):
+        res = image
         #Thresholding T = 100
         ret, res = cv.threshold(image, 90, 255, cv.THRESH_BINARY_INV)
+        #cv.imshow('Pre Threshold', res)
         low_pass_kernel = np.ones((5, 5), np.float32) / 25.0
         res = cv.filter2D(res, -1, low_pass_kernel)
+        #cv.imshow('Low pass filter', res)
         #Morphology transformation
         res = self.get_dilation_image(res, self.kernel_5, 2)
         res = self.get_closing_image(res, self.kernel_5)

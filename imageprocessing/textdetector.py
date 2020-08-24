@@ -15,5 +15,8 @@ class TextDetector():
             x, y, w, h = bounding_box.get_values()
             ROI = grayscale[y:y+h, x:x+w]
             #ROI = self.preprocessing(ROI)
-            cv.imshow('ROI {} {} {} {}'.format(x, y, w, h), ROI)
-            print(pytesseract.image_to_string(ROI))
+            #cv.imshow('ROI {} {} {} {}'.format(x, y, w, h), ROI)
+            string = pytesseract.image_to_string(ROI)
+            if string != '':
+                print(string)
+
